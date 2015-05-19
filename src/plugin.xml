@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin xmlns="http://www.urbancode.com/PluginXMLSchema_v1" 
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <header>
+    <identifier id="com.urbancode.air.plugin.DB2Tools" name="DB2 Tools" version="7"/>
+    <description>
+		The DB2 plugin is an automation based plugin that provides steps for executing DB2 statements.
+	</description>
+    <tag>Scripting/DB2</tag>
+  </header>
+  <step-type name="Run DB2 Script">
+    <description>Execute a DB2 script</description>
+    <properties>
+		<property name="scriptBody">
+			<property-ui type="textAreaBox"
+						 label="Script Body"
+						 description="Enter the SQL script to execute. Choose either Script Body or Script File."/>
+		</property>
+		<property name="scriptFile">
+			<property-ui type="textBox"
+						 label="Script File"
+						 description="The path to a SQL script file to execute, including the script name. Choose either Script Body or Script File."/>
+		</property>
+		<property name="dbuser">
+			<property-ui type="textBox" 
+						 label="DB User Name" 
+						 default-value="${p?:resource/db2.dbuser}" 
+						 description="The user name to be used to connect to the DB2 database." 
+						 hidden="true"/>
+		</property>
+		<property name="dbpassword">
+			<property-ui type="secureBox" 
+						 label="DB User Password" 
+						 default-value="${p?:resource/db2.dbpassword}" 
+						 description="The password to be used to connect to the DB2 database." 
+						 hidden="true"/>
+		</property>
+		<property name="dbhost">
+			<property-ui type="textBox" 
+						 default-value="${p?:resource/db2.dbhost}" 
+						 label="DB Host" 
+						 description="Hostname of the DB2 server to connect to." 
+						 hidden="true"/>
+		</property>
+		<property name="dbport">
+			<property-ui type="textBox" 
+						 default-value="${p?:resource/db2.dbport}" 
+						 label="DB Port" 
+						 description="The port number to connect to." 
+						 hidden="true"/>
+		</property>
+		<property name="dbname">
+			<property-ui type="textBox" 
+						 default-value="${p?:resource/db2.dbname}" 
+						 label="Database Name" 
+						 description="The database name to connect to." 
+						 hidden="true"/>
+		</property>
+		<property name="dbjar">
+			<property-ui type="textBox" 
+						 default-value="${p?:resource/db2.dbjar}" 
+						 label="DB2 JDBC Driver" 
+						 description="The path and filename of the IBM DB2 JDBC Driver (db2jcc.jar)."
+						 hidden="true"/>
+		</property>			
+	</properties>
+    <post-processing><![CDATA[
+        if (properties.get("exitCode") != 0) {
+            properties.put(new java.lang.String("Status"), new java.lang.String("Failure"));
+        }
+        else {
+            properties.put("Status", "Success");
+        }
+     ]]></post-processing>
+    <command program="${GROOVY_HOME}/bin/groovy">
+      <arg value="-cp"/>
+      <arg path="classes:lib/CommonsUtil.jar"/>
+      <arg file="run_db2_script.groovy"/>
+	  <arg file="${PLUGIN_INPUT_PROPS}"/>
+      <arg file="${PLUGIN_OUTPUT_PROPS}"/>
+    </command>
+  </step-type>
+  <step-type name="Run DB2 Command">
+    <description>Execute a DB2 command</description>
+    <properties>
+		<property name="commandBody">
+			<property-ui type="textAreaBox"
+						 label="Command Body"
+						 description="Enter the DB2 commands to execute. Choose either Command Body or Command File."/>
+		</property>
+		<property name="commandFile">
+			<property-ui type="textBox"
+						 label="Command File"
+						 description="The path to a DB2 command file to execute, including the command file name. Choose either Command Body or Command File."/>
+		</property>
+		<property name="dbinstance">
+			<property-ui type="textBox" 
+						 label="DB Instance Name" 
+						 default-value="${p?:resource/db2.dbinstance}" 
+						 description="The name of the DB2 instance to connect to." 
+						 hidden="true"/>
+		</property>		
+	</properties>
+    <post-processing><![CDATA[
+        if (properties.get("exitCode") != 0) {
+            properties.put(new java.lang.String("Status"), new java.lang.String("Failure"));
+        }
+        else {
+            properties.put("Status", "Success");
+        }
+     ]]></post-processing>
+    <command program="${GROOVY_HOME}/bin/groovy">
+      <arg value="-cp"/>
+	  <arg path="classes:lib/shell.jar:lib/CommonsUtil.jar:lib/log4j.jar:lib/NativeProcess.jar:lib/WinAPI.jar"/>
+      <arg file="run_db2_command.groovy"/>
+	  <arg file="${PLUGIN_INPUT_PROPS}"/>
+      <arg file="${PLUGIN_OUTPUT_PROPS}"/>
+    </command>
+  </step-type>    
+</plugin>
