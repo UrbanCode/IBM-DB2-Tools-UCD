@@ -54,7 +54,25 @@ sqlStatements.eachLine
 	println("=================================================================================================");
 	println("Statement: " + sqlStatement);
 	
-	sql.execute(sqlStatement)
+	if (sqlStatement.trim().startsWith("select"))
+	{
+	    println("Response: ");
+		sql.eachRow(sqlStatement, {
+	    	println(it);
+	    })
+	}
+	else
+	{
+		boolean success = sql.execute(sqlStatement)
+		if (success)
+		{
+		    println("Command executed successfully.")
+		}
+		else		
+		{
+			println "Command failed."
+		}   
+	}
 }
 
 println();
