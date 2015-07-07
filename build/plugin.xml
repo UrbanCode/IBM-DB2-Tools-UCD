@@ -2,7 +2,7 @@
 <plugin xmlns="http://www.urbancode.com/PluginXMLSchema_v1" 
 		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <header>
-    <identifier id="com.urbancode.air.plugin.DB2Tools" name="DB2 Tools" version="7"/>
+    <identifier id="com.urbancode.air.plugin.DB2Tools" name="DB2 Tools" version="12"/>
     <description>
 		The DB2 plugin is an automation based plugin that provides steps for executing DB2 statements.
 	</description>
@@ -21,6 +21,11 @@
 						 label="Script File"
 						 description="The path to a SQL script file to execute, including the script name. Choose either Script Body or Script File."/>
 		</property>
+		<property name="continueOnFail">
+			<property-ui type="checkBox"
+						 label="Continue on fail"
+						 description="Switch to control whether processing next SQL script should continue after failure."/>
+		</property>		
 		<property name="dbuser">
 			<property-ui type="textBox" 
 						 label="DB User Name" 
@@ -93,11 +98,16 @@
 						 label="Command File"
 						 description="The path to a DB2 command file to execute, including the command file name. Choose either Command Body or Command File."/>
 		</property>
-		<property name="dbinstance">
-			<property-ui type="textBox" 
-						 label="DB Instance Name" 
-						 default-value="${p?:resource/db2.dbinstance}" 
-						 description="The name of the DB2 instance to connect to." 
+		<property name="commandArgs">
+			<property-ui type="textBox"
+						 label="Command Args"
+						 description="The command arguments to pass into the DB2 Command Body or Command File."/>
+		</property>
+		<property name="escapeChars">
+			<property-ui type="textAreaBox" 
+						 label="Escape Characters" 
+						 default-value="&lt;&#10;&gt;&#10;&amp;"
+						 description="New line separated list of characters to escape." 
 						 hidden="true"/>
 		</property>		
 	</properties>
@@ -112,7 +122,7 @@
     <command program="${GROOVY_HOME}/bin/groovy">
       <arg value="-cp"/>
 	  <arg path="classes:lib/shell.jar:lib/CommonsUtil.jar:lib/log4j.jar:lib/NativeProcess.jar:lib/WinAPI.jar"/>
-      <arg file="run_db2_command.groovy"/>
+      <arg file="run_db2_command_file.groovy"/>
 	  <arg file="${PLUGIN_INPUT_PROPS}"/>
       <arg file="${PLUGIN_OUTPUT_PROPS}"/>
     </command>

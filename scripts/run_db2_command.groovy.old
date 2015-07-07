@@ -60,14 +60,14 @@ else {
     commandPath = commandFile
 }
 
+def runFile = File.createTempFile("tmp",".ps1")
+runFile.deleteOnExit()
+runFile.createNewFile()
+runFile.write("")
+
 def db2Commands = new File(commandPath)
 db2Commands.eachLine 
 {	db2Command ->
-	println();
-	println("=================================================================================================");
-	println("DB2 Command : " + db2Command);
-	println("DB2 Args    : " + commandArgs);
-	println("DB2 Instance: " + dbinstance);
 
 	if (commandArgs != null) {	
 		def commandArgsList = commandArgs.split()
@@ -79,41 +79,43 @@ db2Commands.eachLine
 			db2Command = db2Command.replace(searchString, replaceString)
 			k++
 		}
-	}
+	}	
+	println("DB2 Command : " + db2Command);
 	
-	println("DB2 Command (resolved): " + db2Command);
+	commandData.write(db2Command)
+}
+
+runPath = commandData.getAbsolutePath()
 	
-	execString = ""
-	if (dbinstance != null && dbinstance != "")
+execString = ""
+if (dbinstance != null && dbinstance != "")
+{
+	execString = "cmd /c set DB2INSTANCE=$dbinstance & db2cmd /c /w /i db2 -f $runPath";
+}
+else
+{
+	execString = "db2cmd /c /w /i db2 -f $runPath";
+}
+
+Process proc = execString.execute();
+proc.waitFor();
+
+println("${proc.getText()}")
+println("command exit code: ${proc.exitValue()}")
+
+exitCode = proc.exitValue()
+
+if (exitCode != 0) {
+	if (!continueOnFail)
 	{
-		execString = "cmd /c set DB2INSTANCE=$dbinstance & db2cmd /c /w /i $db2Command";
-		//execString = "cmd /c set DB2INSTANCE=$dbinstance & db2cmd db2 -f $commandPath";
+		println "Failed to execute command."
+		System.exit(exitCode)
 	}
 	else
 	{
-		execString = "db2cmd /c /w /i $db2Command";
+		println "Command failed however processing will continue."
 	}
-	
-	Process proc = execString.execute();
-	proc.waitFor();
-
-	println("${proc.getText()}")
-	println("command exit code: ${proc.exitValue()}")
-
-	exitCode = proc.exitValue()
-
-	if (exitCode != 0) {
-		if (!continueOnFail)
-		{
-			println "Failed to execute command."
-			System.exit(exitCode)
-		}
-		else
-		{
-			println "Command failed however processing will continue."
-		}
-	}
-	else {
-		println "Command executed successfully."
-	}
+}
+else {
+	println "Command executed successfully."
 }

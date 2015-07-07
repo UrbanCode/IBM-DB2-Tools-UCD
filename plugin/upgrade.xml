@@ -20,6 +20,22 @@
     </migrate>
     <migrate to-version="7">
       <migrate-command name="Run DB2 Command"/>
+    </migrate>
+    <migrate to-version="8">
+      <migrate-command name="Run DB2 Command"/>
+    </migrate>
+    <migrate to-version="9">
+      <migrate-command name="Run DB2 Script"/>
+	  <migrate-command name="Run DB2 Command"/>
+    </migrate>			
+    <migrate to-version="10">
+	  <migrate-command name="Run DB2 Command"/>
+    </migrate>	
+    <migrate to-version="11">
+	  <migrate-command name="Run DB2 Command"/>
+    </migrate>
+    <migrate to-version="12">
+	  <migrate-command name="Run DB2 Command"/>
     </migrate>		
 	
 </plugin-upgrade>

@@ -20,7 +20,7 @@
 
 		<property name="project" value="" />
 
-		<property name="build.version" value="07" />
+		<property name="build.version" value="12.00" />
 		<property name="deployPluginArchiveName" value="releases/plugin-db2-tools_v${build.version}.zip" />
 		
 		<property name="build.dir" value="${basedir}/build" />

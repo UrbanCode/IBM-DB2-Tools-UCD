@@ -6,6 +6,8 @@ def props = apTool.getStepProperties();
 
 def commandBody = props['commandBody'] != "" ? props['commandBody'] : null
 def commandFile = props['commandFile'] != "" ? props['commandFile'] : null
+def commandArgs = props['commandArgs'] != "" ? props['commandArgs'] : null
+def continueOnFail = props['continueOnFail'] != "" ? props['continueOnFail'] : null
 
 def dbinstance = props['dbinstance'] != "" ? props['dbinstance'] : null
 
@@ -53,7 +55,6 @@ if (commandBody != null) {
     commandData.write("")
     commandData.write(commandBody)
     commandPath = commandData.getAbsolutePath()
-    
 }
 else {
     commandPath = commandFile
@@ -65,12 +66,28 @@ db2Commands.eachLine
 	println();
 	println("=================================================================================================");
 	println("DB2 Command : " + db2Command);
+	println("DB2 Args    : " + commandArgs);
 	println("DB2 Instance: " + dbinstance);
+
+	if (commandArgs != null) {	
+		def commandArgsList = commandArgs.split()
+		def k = 0
+		while (k < commandArgsList.size()) {	
+			def searchString = "{" + (k + 1) + "}"
+			def replaceString = commandArgsList[k]
+			
+			db2Command = db2Command.replace(searchString, replaceString)
+			k++
+		}
+	}
+	
+	println("DB2 Command (resolved): " + db2Command);
 	
 	execString = ""
 	if (dbinstance != null && dbinstance != "")
 	{
 		execString = "cmd /c set DB2INSTANCE=$dbinstance & db2cmd /c /w /i $db2Command";
+		//execString = "cmd /c set DB2INSTANCE=$dbinstance & db2cmd db2 -f $commandPath";
 	}
 	else
 	{
@@ -86,8 +103,15 @@ db2Commands.eachLine
 	exitCode = proc.exitValue()
 
 	if (exitCode != 0) {
-		println "Failed to execute command."
-		System.exit(exitCode)
+		if (!continueOnFail)
+		{
+			println "Failed to execute command."
+			System.exit(exitCode)
+		}
+		else
+		{
+			println "Command failed however processing will continue."
+		}
 	}
 	else {
 		println "Command executed successfully."

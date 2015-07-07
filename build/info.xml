@@ -105,7 +105,7 @@
   </meta-html>
     
   <!-- Do not change the release-version, the build process injects it. -->
-  <release-version>7.05</release-version>  
+  <release-version>12.00</release-version>
     
   <release-notes>
     <!--
@@ -144,6 +144,22 @@
 	  </release-note>
 	  <release-note plugin-version="7">
 		Change DB2 command
-	  </release-note>		  
+	  </release-note>	
+	  <release-note plugin-version="8">
+		Change DB2 command
+	  </release-note>
+	  <release-note plugin-version="9">
+		Change DB2 command
+		Change DB2 script
+	  </release-note>
+	  <release-note plugin-version="10">
+		Change DB2 command
+	  </release-note>
+	  <release-note plugin-version="11">
+		Change DB2 command
+	  </release-note>
+	  <release-note plugin-version="12">
+		Change DB2 command
+	  </release-note>	
   </release-notes>
 </pluginInfo>

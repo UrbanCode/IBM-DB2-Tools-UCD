@@ -9,6 +9,7 @@ def props = apTool.getStepProperties();
 
 def scriptBody = props['scriptBody'] != "" ? props['scriptBody'] : null
 def scriptFile = props['scriptFile'] != "" ? props['scriptFile'] : null
+def continueOnFail = props['continueOnFail'] != "" ? props['continueOnFail'] : null
 
 def dbuser = props['dbuser'] != "" ? props['dbuser'] : null
 def dbpassword = props['dbpassword'] != "" ? props['dbpassword'] : null
@@ -54,24 +55,25 @@ sqlStatements.eachLine
 	println("=================================================================================================");
 	println("Statement: " + sqlStatement);
 	
-	if (sqlStatement.trim().startsWith("select"))
+	try
 	{
-	    println("Response: ");
-		sql.eachRow(sqlStatement, {
-	    	println(it);
-	    })
+		sql.execute(sqlStatement)
 	}
-	else
+	catch (e)
 	{
-		boolean success = sql.execute(sqlStatement)
-		if (success)
+		if (!continueOnFail)
 		{
-		    println("Command executed successfully.")
+			println();
+			println("=================================================================================================");
+			println "Statement failed."
+			System.exit(-1)
 		}
-		else		
+		else
 		{
-			println "Command failed."
-		}   
+			println();
+			println("=================================================================================================");
+			println "Statement failed however processing will continue..."
+		}
 	}
 }
 

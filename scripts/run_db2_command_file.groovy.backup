@@ -7,10 +7,6 @@ def props = apTool.getStepProperties();
 def commandBody = props['commandBody'] != "" ? props['commandBody'] : null
 def commandFile = props['commandFile'] != "" ? props['commandFile'] : null
 def commandArgs = props['commandArgs'] != "" ? props['commandArgs'] : null
-def continueOnFail = props['continueOnFail'] != "" ? props['continueOnFail'] : null
-
-def dbinstance = props['dbinstance'] != "" ? props['dbinstance'] : null
-
 
 final File PLUGIN_HOME = new File(System.getenv().get("PLUGIN_HOME"))
 
@@ -49,7 +45,7 @@ System.setProperty("com.urbancode.winapi.WinAPI.dllPath", libraryPath.absolutePa
 def commandPath = ""
 
 if (commandBody != null) {
-    def commandData = File.createTempFile("tmp",".ps1")
+    def commandData = File.createTempFile("tmp",".cmd")
     commandData.deleteOnExit()
     commandData.createNewFile()
     commandData.write("")
@@ -60,14 +56,16 @@ else {
     commandPath = commandFile
 }
 
+def runFile = File.createTempFile("tmp",".bat")
+runFile.deleteOnExit()
+runFile.createNewFile()
+runFile.write("")
+
+def ln = System.getProperty('line.separator')
+
 def db2Commands = new File(commandPath)
 db2Commands.eachLine 
 {	db2Command ->
-	println();
-	println("=================================================================================================");
-	println("DB2 Command : " + db2Command);
-	println("DB2 Args    : " + commandArgs);
-	println("DB2 Instance: " + dbinstance);
 
 	if (commandArgs != null) {	
 		def commandArgsList = commandArgs.split()
@@ -80,40 +78,34 @@ db2Commands.eachLine
 			k++
 		}
 	}
-	
-	println("DB2 Command (resolved): " + db2Command);
-	
-	execString = ""
-	if (dbinstance != null && dbinstance != "")
-	{
-		execString = "cmd /c set DB2INSTANCE=$dbinstance & db2cmd /c /w /i $db2Command";
-		//execString = "cmd /c set DB2INSTANCE=$dbinstance & db2cmd db2 -f $commandPath";
-	}
-	else
-	{
-		execString = "db2cmd /c /w /i $db2Command";
-	}
-	
-	Process proc = execString.execute();
-	proc.waitFor();
 
-	println("${proc.getText()}")
-	println("command exit code: ${proc.exitValue()}")
+	// Escape special DOS characters so they can be interpreted by DB2
+	db2Command = db2Command.replace("<", "^<")
+	db2Command = db2Command.replace(">", "^>")
+	db2Command = db2Command.replace("%", "^%")
+	
+	println("DB2 Command : " + db2Command);
+	
+	runFile.append(db2Command)
+	runFile.append(ln)
+}
 
-	exitCode = proc.exitValue()
+runPath = runFile.getAbsolutePath()
+	
+execString = "cmd /c db2cmdadmin /c /w /i $runPath";
 
-	if (exitCode != 0) {
-		if (!continueOnFail)
-		{
-			println "Failed to execute command."
-			System.exit(exitCode)
-		}
-		else
-		{
-			println "Command failed however processing will continue."
-		}
-	}
-	else {
-		println "Command executed successfully."
-	}
+Process proc = execString.execute();
+proc.waitFor();
+
+println("${proc.getText()}")
+println("Command exit code: ${proc.exitValue()}")
+
+exitCode = proc.exitValue()
+
+if (exitCode != 0) {
+	println "Command failed."
+	System.exit(exitCode)
+}
+else {
+	println "Command executed successfully."
 }
