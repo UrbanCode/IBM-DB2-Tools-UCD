@@ -1,8 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<plugin xmlns="http://www.urbancode.com/PluginXMLSchema_v1" 
+<!--
+ - © Copyright IBM Corporation 2014, 2016.
+ - This is licensed under the following license.
+ - The Eclipse Public 1.0 License (http://www.eclipse.org/legal/epl-v10.html)
+ - U.S. Government Users Restricted Rights:  Use, duplication or disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
+-->
+<plugin xmlns="http://www.urbancode.com/PluginXMLSchema_v1"
 		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <header>
-    <identifier id="com.urbancode.air.plugin.DB2Tools" name="DB2 Tools" version="12"/>
+    <identifier id="com.urbancode.air.plugin.DB2Tools" name="DB2 Tools" version="13"/>
     <description>
 		The DB2 plugin is an automation based plugin that provides steps for executing DB2 statements.
 	</description>
@@ -25,49 +31,49 @@
 			<property-ui type="checkBox"
 						 label="Continue on fail"
 						 description="Switch to control whether processing next SQL script should continue after failure."/>
-		</property>		
+		</property>
 		<property name="dbuser">
-			<property-ui type="textBox" 
-						 label="DB User Name" 
-						 default-value="${p?:resource/db2.dbuser}" 
-						 description="The user name to be used to connect to the DB2 database." 
+			<property-ui type="textBox"
+						 label="DB User Name"
+						 default-value="${p?:resource/db2.dbuser}"
+						 description="The user name to be used to connect to the DB2 database."
 						 hidden="true"/>
 		</property>
 		<property name="dbpassword">
-			<property-ui type="secureBox" 
-						 label="DB User Password" 
-						 default-value="${p?:resource/db2.dbpassword}" 
-						 description="The password to be used to connect to the DB2 database." 
+			<property-ui type="secureBox"
+						 label="DB User Password"
+						 default-value="${p?:resource/db2.dbpassword}"
+						 description="The password to be used to connect to the DB2 database."
 						 hidden="true"/>
 		</property>
 		<property name="dbhost">
-			<property-ui type="textBox" 
-						 default-value="${p?:resource/db2.dbhost}" 
-						 label="DB Host" 
-						 description="Hostname of the DB2 server to connect to." 
+			<property-ui type="textBox"
+						 default-value="${p?:resource/db2.dbhost}"
+						 label="DB Host"
+						 description="Hostname of the DB2 server to connect to."
 						 hidden="true"/>
 		</property>
 		<property name="dbport">
-			<property-ui type="textBox" 
-						 default-value="${p?:resource/db2.dbport}" 
-						 label="DB Port" 
-						 description="The port number to connect to." 
+			<property-ui type="textBox"
+						 default-value="${p?:resource/db2.dbport}"
+						 label="DB Port"
+						 description="The port number to connect to."
 						 hidden="true"/>
 		</property>
 		<property name="dbname">
-			<property-ui type="textBox" 
-						 default-value="${p?:resource/db2.dbname}" 
-						 label="Database Name" 
-						 description="The database name to connect to." 
+			<property-ui type="textBox"
+						 default-value="${p?:resource/db2.dbname}"
+						 label="Database Name"
+						 description="The database name to connect to."
 						 hidden="true"/>
 		</property>
 		<property name="dbjar">
-			<property-ui type="textBox" 
-						 default-value="${p?:resource/db2.dbjar}" 
-						 label="DB2 JDBC Driver" 
+			<property-ui type="textBox"
+						 default-value="${p?:resource/db2.dbjar}"
+						 label="DB2 JDBC Driver"
 						 description="The path and filename of the IBM DB2 JDBC Driver (db2jcc.jar)."
 						 hidden="true"/>
-		</property>			
+		</property>
 	</properties>
     <post-processing><![CDATA[
         if (properties.get("exitCode") != 0) {
@@ -79,7 +85,7 @@
      ]]></post-processing>
     <command program="${GROOVY_HOME}/bin/groovy">
       <arg value="-cp"/>
-      <arg path="classes:lib/CommonsUtil.jar"/>
+      <arg path="classes:lib/CommonsUtil.jar:lib/groovy-plugin-utils-1.0.jar"/>
       <arg file="run_db2_script.groovy"/>
 	  <arg file="${PLUGIN_INPUT_PROPS}"/>
       <arg file="${PLUGIN_OUTPUT_PROPS}"/>
@@ -104,12 +110,12 @@
 						 description="The command arguments to pass into the DB2 Command Body or Command File."/>
 		</property>
 		<property name="escapeChars">
-			<property-ui type="textAreaBox" 
-						 label="Escape Characters" 
+			<property-ui type="textAreaBox"
+						 label="Escape Characters"
 						 default-value="&lt;&#10;&gt;&#10;&amp;"
-						 description="New line separated list of characters to escape." 
+						 description="New line separated list of characters to escape."
 						 hidden="true"/>
-		</property>		
+		</property>
 	</properties>
     <post-processing><![CDATA[
         if (properties.get("exitCode") != 0) {
@@ -121,10 +127,10 @@
      ]]></post-processing>
     <command program="${GROOVY_HOME}/bin/groovy">
       <arg value="-cp"/>
-	  <arg path="classes:lib/shell.jar:lib/CommonsUtil.jar:lib/log4j.jar:lib/NativeProcess.jar:lib/WinAPI.jar"/>
+	  <arg path="classes:lib/shell.jar:lib/CommonsUtil.jar:lib/log4j-1.2.16.jar:lib/NativeProcess.jar:lib/WinAPI.jar:lib/groovy-plugin-utils-1.0.jar"/>
       <arg file="run_db2_command_file.groovy"/>
 	  <arg file="${PLUGIN_INPUT_PROPS}"/>
       <arg file="${PLUGIN_OUTPUT_PROPS}"/>
     </command>
-  </step-type>    
+  </step-type>
 </plugin>
