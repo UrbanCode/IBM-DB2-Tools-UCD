@@ -25,8 +25,9 @@ This plug-in is protected under the [Eclipse Public 1.0 License](http://www.ecli
 
 ### Build
 
-A few build dependencies are not publicly available at the plug-in's initial GitHub release. Please find the following dependencies in your local
-instance of IBM UrbanCode Deploy and place them in the ./lib directory.
+A few build dependencies are not publicly available at the plug-in's GitHub release. Please find the following dependencies in your local
+instance of IBM UrbanCode Deploy and place them in the /lib directory.
+
     - CommonsUtils.jar
     - NativeProcess.jar
     - shell.jar
