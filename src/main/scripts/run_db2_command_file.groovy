@@ -1,3 +1,10 @@
+/**
+ *  © Copyright IBM Corporation 2014, 2016.
+ *  This is licensed under the following license.
+ *  The Eclipse Public 1.0 License (http://www.eclipse.org/legal/epl-v10.html)
+ *  U.S. Government Users Restricted Rights:  Use, duplication or disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
+ */
+
 import com.urbancode.air.CommandHelper;
 import com.urbancode.air.AirPluginTool;
 import com.urbancode.shell.Shell;
@@ -40,7 +47,7 @@ def String getArch() {
     else {
         result = "unknown"
     }
-             
+
     return result
 }
 
@@ -70,16 +77,16 @@ runFile.write("")
 def ln = System.getProperty('line.separator')
 
 def db2Commands = new File(commandPath)
-db2Commands.eachLine 
+db2Commands.eachLine
 {	db2Command ->
 
-	if (commandArgs != null) {	
+	if (commandArgs != null) {
 		def commandArgsList = commandArgs.split()
 		def k = 0
-		while (k < commandArgsList.size()) {	
+		while (k < commandArgsList.size()) {
 			def searchString = "{" + (k + 1) + "}"
 			def replaceString = commandArgsList[k]
-			
+
 			db2Command = db2Command.replace(searchString, replaceString)
 			k++
 		}
@@ -89,15 +96,15 @@ db2Commands.eachLine
 	escapeChars.each { escapeChar ->
 		db2Command = db2Command.replace(escapeChar, "^" + escapeChar)
 	}
-	
+
 	println("DB2 Command : " + db2Command);
-	
+
 	runFile.append(db2Command)
 	runFile.append(ln)
 }
 
 runPath = runFile.getAbsolutePath()
-	
+
 execString = "db2cmdadmin /c /w /i $runPath";
 
 
@@ -116,7 +123,7 @@ def hook = {
 	proc.destroy()
 }
 Runtime.getRuntime().addShutdownHook(hook as Thread);
-	
+
 proc.outputStream.close()           // close process stdin
 def outFuture = processes.redirectOutput(proc, System.out);
 def errFuture = processes.redirectError(proc, System.err);

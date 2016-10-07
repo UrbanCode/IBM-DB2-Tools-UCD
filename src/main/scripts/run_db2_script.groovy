@@ -1,3 +1,10 @@
+/**
+ *  © Copyright IBM Corporation 2014, 2016.
+ *  This is licensed under the following license.
+ *  The Eclipse Public 1.0 License (http://www.eclipse.org/legal/epl-v10.html)
+ *  U.S. Government Users Restricted Rights:  Use, duplication or disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
+ */
+
 import com.urbancode.air.CommandHelper;
 import com.urbancode.air.AirPluginTool;
 import groovy.sql.Sql;
@@ -38,7 +45,7 @@ if (scriptBody != null) {
     scriptData.write("")
     scriptData.write(scriptBody)
     commandScriptPath = scriptData.getAbsolutePath()
-    
+
 }
 else {
     commandScriptPath = scriptFile
@@ -49,12 +56,12 @@ this.class.classLoader.rootLoader.addURL(new URL("file:///" + dbjar));
 def sql = Sql.newInstance("jdbc:db2://" + dbhost + ":" + dbport + "/" + dbname, dbuser, dbpassword, "com.ibm.db2.jcc.DB2Driver")
 
 def sqlStatements = new File(commandScriptPath)
-sqlStatements.eachLine 
+sqlStatements.eachLine
 {	sqlStatement ->
 	println();
 	println("=================================================================================================");
 	println("Statement: " + sqlStatement);
-	
+
 	try
 	{
 		sql.execute(sqlStatement)
